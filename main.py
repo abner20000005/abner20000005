@@ -4,3 +4,4 @@
 - Coordina el flujo de navegación entre los distintos módulos.
 """""
 edad = int(input("Ingrese su edad: "))
+print(edad)
