@@ -1,0 +1,426 @@
+USE [master]
+GO
+/****** Objeto: Database [Biblioteca360] Fecha de script: 7/29/2026 3:29:33 PM ******/
+CREATE DATABASE [Biblioteca360]
+ CONTAINMENT = NONE
+ ON  PRIMARY 
+( NAME = N'Biblioteca360', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL17.MSSQLSERVER2026\MSSQL\DATA\Biblioteca360.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+ LOG ON 
+( NAME = N'Biblioteca360_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL17.MSSQLSERVER2026\MSSQL\DATA\Biblioteca360_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+ WITH CATALOG_COLLATION = DATABASE_DEFAULT, LEDGER = OFF
+GO
+ALTER DATABASE [Biblioteca360] SET COMPATIBILITY_LEVEL = 170
+GO
+IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
+begin
+EXEC [Biblioteca360].[dbo].[sp_fulltext_database] @action = 'enable'
+end
+GO
+ALTER DATABASE [Biblioteca360] SET ANSI_NULL_DEFAULT OFF 
+GO
+ALTER DATABASE [Biblioteca360] SET ANSI_NULLS OFF 
+GO
+ALTER DATABASE [Biblioteca360] SET ANSI_PADDING OFF 
+GO
+ALTER DATABASE [Biblioteca360] SET ANSI_WARNINGS OFF 
+GO
+ALTER DATABASE [Biblioteca360] SET ARITHABORT OFF 
+GO
+ALTER DATABASE [Biblioteca360] SET AUTO_CLOSE OFF 
+GO
+ALTER DATABASE [Biblioteca360] SET AUTO_SHRINK OFF 
+GO
+ALTER DATABASE [Biblioteca360] SET AUTO_UPDATE_STATISTICS ON 
+GO
+ALTER DATABASE [Biblioteca360] SET CURSOR_CLOSE_ON_COMMIT OFF 
+GO
+ALTER DATABASE [Biblioteca360] SET CURSOR_DEFAULT  GLOBAL 
+GO
+ALTER DATABASE [Biblioteca360] SET CONCAT_NULL_YIELDS_NULL OFF 
+GO
+ALTER DATABASE [Biblioteca360] SET NUMERIC_ROUNDABORT OFF 
+GO
+ALTER DATABASE [Biblioteca360] SET QUOTED_IDENTIFIER OFF 
+GO
+ALTER DATABASE [Biblioteca360] SET RECURSIVE_TRIGGERS OFF 
+GO
+ALTER DATABASE [Biblioteca360] SET  ENABLE_BROKER 
+GO
+ALTER DATABASE [Biblioteca360] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
+GO
+ALTER DATABASE [Biblioteca360] SET DATE_CORRELATION_OPTIMIZATION OFF 
+GO
+ALTER DATABASE [Biblioteca360] SET TRUSTWORTHY OFF 
+GO
+ALTER DATABASE [Biblioteca360] SET ALLOW_SNAPSHOT_ISOLATION OFF 
+GO
+ALTER DATABASE [Biblioteca360] SET PARAMETERIZATION SIMPLE 
+GO
+ALTER DATABASE [Biblioteca360] SET READ_COMMITTED_SNAPSHOT OFF 
+GO
+ALTER DATABASE [Biblioteca360] SET HONOR_BROKER_PRIORITY OFF 
+GO
+ALTER DATABASE [Biblioteca360] SET RECOVERY FULL 
+GO
+ALTER DATABASE [Biblioteca360] SET  MULTI_USER 
+GO
+ALTER DATABASE [Biblioteca360] SET PAGE_VERIFY CHECKSUM  
+GO
+ALTER DATABASE [Biblioteca360] SET DB_CHAINING OFF 
+GO
+ALTER DATABASE [Biblioteca360] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
+GO
+ALTER DATABASE [Biblioteca360] SET TARGET_RECOVERY_TIME = 60 SECONDS 
+GO
+ALTER DATABASE [Biblioteca360] SET DELAYED_DURABILITY = DISABLED 
+GO
+ALTER DATABASE [Biblioteca360] SET OPTIMIZED_LOCKING = OFF 
+GO
+ALTER DATABASE [Biblioteca360] SET ACCELERATED_DATABASE_RECOVERY = OFF  
+GO
+EXEC sys.sp_db_vardecimal_storage_format N'Biblioteca360', N'ON'
+GO
+ALTER DATABASE [Biblioteca360] SET QUERY_STORE = ON
+GO
+ALTER DATABASE [Biblioteca360] SET QUERY_STORE (OPERATION_MODE = READ_WRITE, CLEANUP_POLICY = (STALE_QUERY_THRESHOLD_DAYS = 30), DATA_FLUSH_INTERVAL_SECONDS = 900, INTERVAL_LENGTH_MINUTES = 60, MAX_STORAGE_SIZE_MB = 1000, QUERY_CAPTURE_MODE = AUTO, SIZE_BASED_CLEANUP_MODE = AUTO, MAX_PLANS_PER_QUERY = 200, WAIT_STATS_CAPTURE_MODE = ON)
+GO
+USE [Biblioteca360]
+GO
+/****** Objeto: Table [dbo].[Autores] Fecha de script: 7/29/2026 3:29:33 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Autores](
+	[Id_Autor] [int] IDENTITY(1,1) NOT NULL,
+	[Nombre] [varchar](80) NOT NULL,
+	[Nacionalidad] [varchar](50) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Id_Autor] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Objeto: Table [dbo].[Categorias] Fecha de script: 7/29/2026 3:29:33 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Categorias](
+	[Id_Categoria] [int] IDENTITY(1,1) NOT NULL,
+	[Nombre] [varchar](50) NOT NULL,
+	[Descripcion] [varchar](150) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Id_Categoria] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Objeto: Table [dbo].[Devoluciones] Fecha de script: 7/29/2026 3:29:33 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Devoluciones](
+	[Id_Devolucion] [int] IDENTITY(1,1) NOT NULL,
+	[Fecha_Devolucion] [date] NOT NULL,
+	[Dias_Retraso] [int] NULL,
+	[Multa] [decimal](10, 2) NULL,
+	[Id_Prestamo] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Id_Devolucion] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[Id_Prestamo] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Objeto: Table [dbo].[Editoriales] Fecha de script: 7/29/2026 3:29:33 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Editoriales](
+	[Id_Editorial] [int] IDENTITY(1,1) NOT NULL,
+	[Nombre] [varchar](80) NOT NULL,
+	[Pais] [varchar](50) NULL,
+	[Telefono] [varchar](20) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Id_Editorial] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Objeto: Table [dbo].[Ejemplares] Fecha de script: 7/29/2026 3:29:33 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Ejemplares](
+	[Id_Ejemplar] [int] IDENTITY(1,1) NOT NULL,
+	[Codigo_Interno] [varchar](30) NOT NULL,
+	[Estado_Fisico] [varchar](30) NOT NULL,
+	[Ubicacion] [varchar](50) NOT NULL,
+	[Disponible] [bit] NOT NULL,
+	[Fecha_Adquisicion] [date] NOT NULL,
+	[Id_Libro] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Id_Ejemplar] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Objeto: Table [dbo].[Lectores] Fecha de script: 7/29/2026 3:29:33 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Lectores](
+	[Id_Lector] [int] IDENTITY(1,1) NOT NULL,
+	[Nombre] [varchar](50) NOT NULL,
+	[Apellido] [varchar](50) NOT NULL,
+	[Identidad] [varchar](13) NOT NULL,
+	[Telefono] [varchar](20) NULL,
+	[Correo] [varchar](100) NULL,
+	[Direccion] [varchar](150) NULL,
+	[Estado] [varchar](20) NULL,
+	[Id_TipoLector] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Id_Lector] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Objeto: Table [dbo].[Libros] Fecha de script: 7/29/2026 3:29:33 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Libros](
+	[Id_Libro] [int] IDENTITY(1,1) NOT NULL,
+	[ISBN] [varchar](20) NOT NULL,
+	[Titulo] [varchar](150) NOT NULL,
+	[Anio_Publicacion] [int] NULL,
+	[Numero_Edicion] [int] NULL,
+	[Descripcion] [varchar](250) NULL,
+	[Id_Categoria] [int] NOT NULL,
+	[Id_Editorial] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Id_Libro] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Objeto: Table [dbo].[LibrosAutores] Fecha de script: 7/29/2026 3:29:33 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[LibrosAutores](
+	[Id_Libro] [int] NOT NULL,
+	[Id_Autor] [int] NOT NULL,
+ CONSTRAINT [PK_LibrosAutores] PRIMARY KEY CLUSTERED 
+(
+	[Id_Libro] ASC,
+	[Id_Autor] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Objeto: Table [dbo].[PagosMultas] Fecha de script: 7/29/2026 3:29:33 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[PagosMultas](
+	[Id_Pago] [int] IDENTITY(1,1) NOT NULL,
+	[Fecha_Pago] [date] NOT NULL,
+	[Monto] [decimal](10, 2) NOT NULL,
+	[Id_Sancion] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Id_Pago] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[Id_Sancion] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Objeto: Table [dbo].[Prestamos] Fecha de script: 7/29/2026 3:29:33 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Prestamos](
+	[Id_Prestamo] [int] IDENTITY(1,1) NOT NULL,
+	[Fecha_Prestamo] [date] NOT NULL,
+	[Fecha_Limite] [date] NOT NULL,
+	[Estado] [varchar](20) NOT NULL,
+	[Id_Lector] [int] NOT NULL,
+	[Id_Ejemplar] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Id_Prestamo] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Objeto: Table [dbo].[Reservas] Fecha de script: 7/29/2026 3:29:33 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Reservas](
+	[Id_Reserva] [int] IDENTITY(1,1) NOT NULL,
+	[Fecha_Reserva] [date] NOT NULL,
+	[Estado] [varchar](20) NOT NULL,
+	[Id_Lector] [int] NOT NULL,
+	[Id_Libro] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Id_Reserva] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Objeto: Table [dbo].[Roles] Fecha de script: 7/29/2026 3:29:33 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Roles](
+	[Id_Rol] [int] IDENTITY(1,1) NOT NULL,
+	[Nombre_Rol] [varchar](50) NOT NULL,
+	[Descripcion] [varchar](150) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Id_Rol] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Objeto: Table [dbo].[Sanciones] Fecha de script: 7/29/2026 3:29:33 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Sanciones](
+	[Id_Sancion] [int] IDENTITY(1,1) NOT NULL,
+	[Motivo] [varchar](150) NOT NULL,
+	[Monto] [decimal](10, 2) NOT NULL,
+	[Estado] [varchar](20) NOT NULL,
+	[Id_Lector] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Id_Sancion] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Objeto: Table [dbo].[TiposLectores] Fecha de script: 7/29/2026 3:29:33 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[TiposLectores](
+	[Id_TipoLector] [int] IDENTITY(1,1) NOT NULL,
+	[Nombre_Tipo] [varchar](50) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Id_TipoLector] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Objeto: Table [dbo].[Usuarios] Fecha de script: 7/29/2026 3:29:33 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Usuarios](
+	[Id_Usuario] [int] IDENTITY(1,1) NOT NULL,
+	[Nombre_Usuario] [varchar](50) NOT NULL,
+	[Contrasena] [varchar](100) NOT NULL,
+	[Estado] [varchar](20) NOT NULL,
+	[Id_Rol] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Id_Usuario] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[Devoluciones] ADD  DEFAULT ((0)) FOR [Dias_Retraso]
+GO
+ALTER TABLE [dbo].[Devoluciones] ADD  DEFAULT ((0)) FOR [Multa]
+GO
+ALTER TABLE [dbo].[Devoluciones]  WITH CHECK ADD  CONSTRAINT [FK_Devoluciones_Prestamos] FOREIGN KEY([Id_Prestamo])
+REFERENCES [dbo].[Prestamos] ([Id_Prestamo])
+GO
+ALTER TABLE [dbo].[Devoluciones] CHECK CONSTRAINT [FK_Devoluciones_Prestamos]
+GO
+ALTER TABLE [dbo].[Ejemplares]  WITH CHECK ADD  CONSTRAINT [FK_Ejemplares_Libros] FOREIGN KEY([Id_Libro])
+REFERENCES [dbo].[Libros] ([Id_Libro])
+GO
+ALTER TABLE [dbo].[Ejemplares] CHECK CONSTRAINT [FK_Ejemplares_Libros]
+GO
+ALTER TABLE [dbo].[Lectores]  WITH CHECK ADD  CONSTRAINT [FK_Lectores_TiposLectores] FOREIGN KEY([Id_TipoLector])
+REFERENCES [dbo].[TiposLectores] ([Id_TipoLector])
+GO
+ALTER TABLE [dbo].[Lectores] CHECK CONSTRAINT [FK_Lectores_TiposLectores]
+GO
+ALTER TABLE [dbo].[Libros]  WITH CHECK ADD  CONSTRAINT [FK_Libros_Categorias] FOREIGN KEY([Id_Categoria])
+REFERENCES [dbo].[Categorias] ([Id_Categoria])
+GO
+ALTER TABLE [dbo].[Libros] CHECK CONSTRAINT [FK_Libros_Categorias]
+GO
+ALTER TABLE [dbo].[Libros]  WITH CHECK ADD  CONSTRAINT [FK_Libros_Editoriales] FOREIGN KEY([Id_Editorial])
+REFERENCES [dbo].[Editoriales] ([Id_Editorial])
+GO
+ALTER TABLE [dbo].[Libros] CHECK CONSTRAINT [FK_Libros_Editoriales]
+GO
+ALTER TABLE [dbo].[LibrosAutores]  WITH CHECK ADD  CONSTRAINT [FK_LibrosAutores_Autores] FOREIGN KEY([Id_Autor])
+REFERENCES [dbo].[Autores] ([Id_Autor])
+GO
+ALTER TABLE [dbo].[LibrosAutores] CHECK CONSTRAINT [FK_LibrosAutores_Autores]
+GO
+ALTER TABLE [dbo].[LibrosAutores]  WITH CHECK ADD  CONSTRAINT [FK_LibrosAutores_Libros] FOREIGN KEY([Id_Libro])
+REFERENCES [dbo].[Libros] ([Id_Libro])
+GO
+ALTER TABLE [dbo].[LibrosAutores] CHECK CONSTRAINT [FK_LibrosAutores_Libros]
+GO
+ALTER TABLE [dbo].[PagosMultas]  WITH CHECK ADD  CONSTRAINT [FK_PagosMultas_Sanciones] FOREIGN KEY([Id_Sancion])
+REFERENCES [dbo].[Sanciones] ([Id_Sancion])
+GO
+ALTER TABLE [dbo].[PagosMultas] CHECK CONSTRAINT [FK_PagosMultas_Sanciones]
+GO
+ALTER TABLE [dbo].[Prestamos]  WITH CHECK ADD  CONSTRAINT [FK_Prestamos_Ejemplares] FOREIGN KEY([Id_Ejemplar])
+REFERENCES [dbo].[Ejemplares] ([Id_Ejemplar])
+GO
+ALTER TABLE [dbo].[Prestamos] CHECK CONSTRAINT [FK_Prestamos_Ejemplares]
+GO
+ALTER TABLE [dbo].[Prestamos]  WITH CHECK ADD  CONSTRAINT [FK_Prestamos_Lectores] FOREIGN KEY([Id_Lector])
+REFERENCES [dbo].[Lectores] ([Id_Lector])
+GO
+ALTER TABLE [dbo].[Prestamos] CHECK CONSTRAINT [FK_Prestamos_Lectores]
+GO
+ALTER TABLE [dbo].[Reservas]  WITH CHECK ADD  CONSTRAINT [FK_Reservas_Lectores] FOREIGN KEY([Id_Lector])
+REFERENCES [dbo].[Lectores] ([Id_Lector])
+GO
+ALTER TABLE [dbo].[Reservas] CHECK CONSTRAINT [FK_Reservas_Lectores]
+GO
+ALTER TABLE [dbo].[Reservas]  WITH CHECK ADD  CONSTRAINT [FK_Reservas_Libros] FOREIGN KEY([Id_Libro])
+REFERENCES [dbo].[Libros] ([Id_Libro])
+GO
+ALTER TABLE [dbo].[Reservas] CHECK CONSTRAINT [FK_Reservas_Libros]
+GO
+ALTER TABLE [dbo].[Sanciones]  WITH CHECK ADD  CONSTRAINT [FK_Sanciones_Lectores] FOREIGN KEY([Id_Lector])
+REFERENCES [dbo].[Lectores] ([Id_Lector])
+GO
+ALTER TABLE [dbo].[Sanciones] CHECK CONSTRAINT [FK_Sanciones_Lectores]
+GO
+ALTER TABLE [dbo].[Usuarios]  WITH CHECK ADD  CONSTRAINT [FK_Usuarios_Roles] FOREIGN KEY([Id_Rol])
+REFERENCES [dbo].[Roles] ([Id_Rol])
+GO
+ALTER TABLE [dbo].[Usuarios] CHECK CONSTRAINT [FK_Usuarios_Roles]
+GO
+USE [master]
+GO
+ALTER DATABASE [Biblioteca360] SET  READ_WRITE 
+GO
