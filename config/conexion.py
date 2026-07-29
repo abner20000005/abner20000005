@@ -6,10 +6,16 @@
 import pyodbc
 
 def conectar():
-    return pyodbc.connect(
-        "DRIVER={ODBC Driver 17 for SQL Server};"
-        "SERVER=.\\SQLEXPRESS;"
-        "DATABASE=Biblioteca360;"
-        "UID=biblioteca;"
-        "PWD=123456;"
-    )
+    try:
+        conexion = pyodbc.connect(
+            "DRIVER={ODBC Driver 17 for SQL Server};"
+            "SERVER=.\\SQLEXPRESS;"
+            "DATABASE=Biblioteca360;"
+            "UID=biblioteca;"
+            "PWD=123456;"
+        )
+        return conexion
+
+    except Exception as e:
+        print("Error de conexión:", e)
+        return None
