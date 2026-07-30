@@ -4,4 +4,16 @@
 - Estructura los datos bibliográficos de la biblioteca.
 """
 
-print "buenas noches"
+class Libro:
+
+    def __init__(self, isbn, titulo, anio, edicion,
+                 descripcion, categoria, editorial, autor):
+
+        self.isbn = isbn
+        self.titulo = titulo
+        self.anio = anio
+        self.edicion = edicion
+        self.descripcion = descripcion
+        self.categoria = categoria
+        self.editorial = editorial
+        self.autor = autor
