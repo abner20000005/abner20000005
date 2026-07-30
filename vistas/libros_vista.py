@@ -6,6 +6,14 @@
 import tkinter as tk
 from tkinter import ttk
 
+from controladores.libro_controlador import (
+    guardar_libro,
+    listar_libros,
+    eliminar_libro,
+    modificar_libro
+)
+
+
 #VENTANA
 
 ventana = tk.Tk()
