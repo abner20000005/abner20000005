@@ -147,3 +147,5 @@ tabla.column("Autor",width=180)
 tabla.pack(fill="both",expand=True,padx=15,pady=(0,15))
 
 ventana.mainloop()
+
+print("hi")
