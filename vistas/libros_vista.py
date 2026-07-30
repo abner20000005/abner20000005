@@ -44,6 +44,62 @@ style.configure(
     font=("Arial",10,"bold")
 )
 
+#FUNCIONES
+
+def actualizar_tabla():
+
+    tabla.delete(*tabla.get_children())
+
+    for libro in listar_libros():
+
+        tabla.insert(
+            "",
+            tk.END,
+            values=(
+                libro.isbn,
+                libro.titulo,
+                libro.categoria,
+                libro.editorial,
+                libro.autor
+            )
+        )
+
+
+def limpiar():
+
+    txtISBN.delete(0, tk.END)
+    txtTitulo.delete(0, tk.END)
+    txtAnio.delete(0, tk.END)
+    txtEdicion.delete(0, tk.END)
+
+    cmbCategoria.set("")
+    cmbEditorial.set("")
+    cmbAutor.set("")
+
+    txtDescripcion.delete("1.0", tk.END)
+
+#Función para guardar un libro
+
+def guardar():
+
+    guardar_libro(
+
+        txtISBN.get(),
+        txtTitulo.get(),
+        txtAnio.get(),
+        txtEdicion.get(),
+        txtDescripcion.get("1.0", tk.END).strip(),
+        cmbCategoria.get(),
+        cmbEditorial.get(),
+        cmbAutor.get()
+
+    )
+
+    actualizar_tabla()
+    limpiar()
+
+
+
 #TITULO
 
 tk.Label(
@@ -102,19 +158,21 @@ txtDescripcion.grid(row=0,column=3,rowspan=7,padx=5)
 frameBotones=tk.Frame(ventana,bg=COLOR_FONDO)
 frameBotones.pack(pady=10)
 
-botones=[
-    ("Guardar","#7B4B3A"),
-    ("Modificar","#8C5B47"),
-    ("Eliminar","#A63D40"),
-    ("Limpiar","#C9B79C")
+botones = [
+
+    ("Guardar", "#7B4B3A", guardar),
+    ("Modificar", "#8C5B47", None),
+    ("Eliminar", "#A63D40", None),
+    ("Limpiar", "#C9B79C", limpiar)
+
 ]
 
-for texto,color in botones:
+for texto, color, comando in botones:
 
-    fg="white"
+    fg = "white"
 
-    if texto=="Limpiar":
-        fg="black"
+    if texto == "Limpiar":
+        fg = "black"
 
     tk.Button(
         frameBotones,
@@ -123,8 +181,9 @@ for texto,color in botones:
         fg=fg,
         width=12,
         relief="flat",
-        font=("Arial",10,"bold")
-    ).pack(side="left",padx=6)
+        font=("Arial",10,"bold"),
+        command=comando
+    ).pack(side="left", padx=6)
 
 #TABLA
 
