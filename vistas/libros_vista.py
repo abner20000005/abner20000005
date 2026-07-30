@@ -138,13 +138,34 @@ tk.Label(frame,text="Categoría",bg=COLOR_FONDO).grid(row=4,column=0,sticky="w")
 cmbCategoria=ttk.Combobox(frame,width=25)
 cmbCategoria.grid(row=4,column=1,padx=5,pady=5)
 
+cmbCategoria["values"] = (
+    "Novela",
+    "Historia",
+    "Ciencia",
+    "Tecnología"
+)
+
 tk.Label(frame,text="Editorial",bg=COLOR_FONDO).grid(row=5,column=0,sticky="w")
 cmbEditorial=ttk.Combobox(frame,width=25)
 cmbEditorial.grid(row=5,column=1,padx=5,pady=5)
 
+cmbEditorial["values"] = (
+    "Santillana",
+    "Pearson",
+    "Planeta",
+    "Anaya"
+)
+
 tk.Label(frame,text="Autor",bg=COLOR_FONDO).grid(row=6,column=0,sticky="w")
 cmbAutor=ttk.Combobox(frame,width=25)
 cmbAutor.grid(row=6,column=1,padx=5,pady=5)
+
+cmbAutor["values"] = (
+    "J.K. Rowling",
+    "Gabriel García Márquez",
+    "Stephen King",
+    "Julio Verne"
+)
 
 #Columna derecha
 
