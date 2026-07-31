@@ -1,5 +1,3 @@
-print("hola")
+from vistas.libros_vista import ventana
 
-guacamole = 1
-
-trinidad = 1 +2
+ventana.mainloop()
