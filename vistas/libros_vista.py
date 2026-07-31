@@ -14,20 +14,16 @@ from controladores.libros_controlador import (
     obtener_libro
 )
 
-# ===========================
-# VENTANA
-# ===========================
 
+# VENTANA
 ventana = tk.Tk()
 ventana.title("Biblioteca 360 - Gestión de Libros")
 ventana.geometry("1000x650")
 ventana.configure(bg="#F4EEE8")
 ventana.resizable(False, False)
 
-# ===========================
-# ESTILOS
-# ===========================
 
+# ESTILOS
 COLOR_FONDO = "#F4EEE8"
 COLOR_VINO = "#6D213C"
 COLOR_CAFE = "#7B4B3A"
@@ -51,10 +47,7 @@ style.configure(
 # Guarda el índice del libro seleccionado
 indice_seleccionado = None
 
-# ===========================
 # FUNCIONES
-# ===========================
-
 def actualizar_tabla():
 
     tabla.delete(*tabla.get_children())
@@ -91,7 +84,7 @@ def limpiar():
 
     indice_seleccionado = None
 
-
+#validación de datos
 def validar_datos():
 
     if txtISBN.get().strip() == "":
@@ -280,10 +273,7 @@ def eliminar():
     )
 
 
-# ===========================
 # TITULO
-# ===========================
-
 tk.Label(
     ventana,
     text="GESTIÓN DE LIBROS",
@@ -293,10 +283,8 @@ tk.Label(
     pady=10
 ).pack(fill="x")
 
-# ===========================
-# FORMULARIO
-# ===========================
 
+# FORMULARIO
 frame = tk.Frame(ventana, bg=COLOR_FONDO)
 frame.pack(fill="x", padx=15, pady=15)
 
@@ -354,9 +342,7 @@ txtDescripcion.grid(
     padx=5
 )
 
-# ===========================
 # BOTONES
-# ===========================
 
 frameBotones = tk.Frame(
     ventana,
@@ -392,10 +378,8 @@ for texto, color, comando in botones:
         command=comando
     ).pack(side="left", padx=6)
 
-# ===========================
-# TABLA
-# ===========================
 
+# TABLA
 tabla = ttk.Treeview(
     ventana,
     columns=(
