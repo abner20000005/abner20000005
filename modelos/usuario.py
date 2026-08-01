@@ -4,4 +4,12 @@
 - Se utiliza para la autenticación y control de permisos en la aplicación.
 """
 
- print ("hola")
+INSERT INTO Roles (Nombre_Rol, Descripcion)
+VALUES ('Administrador', 'Acceso total al sistema'),
+       ('Bibliotecario', 'Gestión de libros y préstamos'),
+       ('Encargado de reportes', 'Generación de informes');
+
+INSERT INTO Usuarios (Nombre_Usuario, Contrasena, Estado, Id_Rol)
+VALUES ('admin', '12345', 'Activo', 1),
+       ('juan', 'abcde', 'Activo', 2),
+       ('maria', 'qwerty', 'Inactivo', 3);
