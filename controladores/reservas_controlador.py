@@ -1,8 +1,7 @@
 from config.conexion import conectar
 from modelos.reservas import Reserva
 
-def listar_reservas_db():
-    """Consulta todas las reservas en SQL Server."""
+def listar_reservas():
     try:
         conn = conectar()
         cursor = conn.cursor()
@@ -17,14 +16,12 @@ def listar_reservas_db():
         registros = cursor.fetchall()
         conn.close()
         
-        # Convertir resultados en objetos Reserva
         return [Reserva(*row) for row in registros]
     except Exception as e:
         print("Error al listar reservas:", e)
         return []
 
-def guardar_reserva_db(id_lector, id_libro, fecha):
-    """Guarda una nueva reserva en la base de datos."""
+def guardar_reserva(id_lector, id_libro, fecha):
     try:
         conn = conectar()
         cursor = conn.cursor()
@@ -34,33 +31,25 @@ def guardar_reserva_db(id_lector, id_libro, fecha):
         """, (id_lector, id_libro, fecha))
         conn.commit()
         conn.close()
-        return True
     except Exception as e:
         print("Error al guardar reserva:", e)
-        return False
 
-def cancelar_reserva_db(id_reserva):
-    """Cambia el estado de una reserva a Cancelada."""
+def cancelar_reserva(id_reserva):
     try:
         conn = conectar()
         cursor = conn.cursor()
         cursor.execute("UPDATE Reservas SET Estado = 'Cancelada' WHERE Id_Reserva = ?", (id_reserva,))
         conn.commit()
         conn.close()
-        return True
     except Exception as e:
         print("Error al cancelar reserva:", e)
-        return False
 
-def eliminar_reserva_db(id_reserva):
-    """Elimina permanentemente una reserva."""
+def eliminar_reserva(id_reserva):
     try:
         conn = conectar()
         cursor = conn.cursor()
         cursor.execute("DELETE FROM Reservas WHERE Id_Reserva = ?", (id_reserva,))
         conn.commit()
         conn.close()
-        return True
     except Exception as e:
         print("Error al eliminar reserva:", e)
-        return False
