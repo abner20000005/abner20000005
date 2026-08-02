@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import ttk
-from ejemplares_controlador_controlador import EjemplarControlador
 
 # Colores
 COLOR_FONDO = "#F4EEE8"
@@ -13,135 +12,168 @@ COLOR_TEXTO = "#2E2E2E"
 COLOR_BLANCO = "#FFFFFF"
 
 
-class VentanaEjemplares:
+class VentanaLectores:
 
     def __init__(self):
 
-        self.controlador = EjemplarControlador()
-
         self.ventana = tk.Tk()
-        self.ventana.title("Gestión de Ejemplares")
-        self.ventana.geometry("700x550")
+        self.ventana.title("Gestión de Lectores")
+        self.ventana.geometry("850x600")
         self.ventana.configure(bg=COLOR_FONDO)
 
-        # Título
+        # ========= TÍTULO =========
         titulo = tk.Label(
             self.ventana,
-            text="Gestión de Ejemplares",
+            text="Gestión de Lectores",
             font=("Arial", 18, "bold"),
             bg=COLOR_FONDO,
             fg=COLOR_VINO
         )
         titulo.pack(pady=15)
 
-        # Código interno
-        tk.Label(self.ventana, text="Código Interno:", bg=COLOR_FONDO).pack()
-        self.codigo = tk.Entry(self.ventana, width=35)
-        self.codigo.pack()
+        # ========= FORMULARIO =========
+        formulario = tk.Frame(
+            self.ventana,
+            bg=COLOR_FONDO
+        )
+        formulario.pack()
 
-        # Libro
-        tk.Label(self.ventana, text="ID del Libro:", bg=COLOR_FONDO).pack()
-        self.libro = tk.Entry(self.ventana, width=35)
-        self.libro.pack()
+        # Nombre
+        tk.Label(
+            formulario,
+            text="Nombre:",
+            bg=COLOR_FONDO,
+            fg=COLOR_TEXTO
+        ).grid(row=0, column=0, padx=10, pady=5, sticky="w")
+
+        self.nombre = tk.Entry(formulario, width=30)
+        self.nombre.grid(row=0, column=1)
+
+        # Identidad
+        tk.Label(
+            formulario,
+            text="Identidad:",
+            bg=COLOR_FONDO,
+            fg=COLOR_TEXTO
+        ).grid(row=1, column=0, padx=10, pady=5, sticky="w")
+
+        self.identidad = tk.Entry(formulario, width=30)
+        self.identidad.grid(row=1, column=1)
+
+        # Teléfono
+        tk.Label(
+            formulario,
+            text="Teléfono:",
+            bg=COLOR_FONDO,
+            fg=COLOR_TEXTO
+        ).grid(row=2, column=0, padx=10, pady=5, sticky="w")
+
+        self.telefono = tk.Entry(formulario, width=30)
+        self.telefono.grid(row=2, column=1)
+
+        # Correo
+        tk.Label(
+            formulario,
+            text="Correo:",
+            bg=COLOR_FONDO,
+            fg=COLOR_TEXTO
+        ).grid(row=3, column=0, padx=10, pady=5, sticky="w")
+
+        self.correo = tk.Entry(formulario, width=30)
+        self.correo.grid(row=3, column=1)
+
+        # Tipo de lector
+        tk.Label(
+            formulario,
+            text="Tipo:",
+            bg=COLOR_FONDO,
+            fg=COLOR_TEXTO
+        ).grid(row=4, column=0, padx=10, pady=5, sticky="w")
+
+        self.tipo = ttk.Combobox(
+            formulario,
+            values=["Estudiante", "Docente", "Administrativo", "Otro"],
+            state="readonly",
+            width=27
+        )
+        self.tipo.grid(row=4, column=1)
 
         # Estado
-        tk.Label(self.ventana, text="Estado Físico:", bg=COLOR_FONDO).pack()
+        tk.Label(
+            formulario,
+            text="Estado:",
+            bg=COLOR_FONDO,
+            fg=COLOR_TEXTO
+        ).grid(row=5, column=0, padx=10, pady=5, sticky="w")
 
         self.estado = ttk.Combobox(
-            self.ventana,
-            values=["Bueno", "Regular", "Dañado"],
+            formulario,
+            values=["Activo", "Inactivo"],
             state="readonly",
-            width=32
+            width=27
         )
-        self.estado.pack()
+        self.estado.grid(row=5, column=1)
 
-        # Ubicación
-        tk.Label(self.ventana, text="Ubicación:", bg=COLOR_FONDO).pack()
-        self.ubicacion = tk.Entry(self.ventana, width=35)
-        self.ubicacion.pack()
+        # ========= BOTONES =========
+        botones = tk.Frame(self.ventana, bg=COLOR_FONDO)
+        botones.pack(pady=20)
 
-        # Disponible
-        self.disponible = tk.BooleanVar()
-        self.disponible.set(True)
-
-        tk.Checkbutton(
-            self.ventana,
-            text="Disponible",
-            variable=self.disponible,
-            bg=COLOR_FONDO
-        ).pack(pady=10)
-
-        # Fecha
-        tk.Label(self.ventana, text="Fecha de Adquisición:", bg=COLOR_FONDO).pack()
-        self.fecha = tk.Entry(self.ventana, width=35)
-        self.fecha.pack()
-
-        # Botón guardar
-        boton = tk.Button(
-            self.ventana,
+        tk.Button(
+            botones,
             text="Guardar",
             bg=COLOR_CAFE,
             fg=COLOR_BLANCO,
-            width=15,
-            command=self.guardar
-        )
-        boton.pack(pady=15)
+            width=12
+        ).grid(row=0, column=0, padx=5)
 
-        # Tabla
+        tk.Button(
+            botones,
+            text="Editar",
+            bg=COLOR_CAFE_CLARO,
+            fg=COLOR_BLANCO,
+            width=12
+        ).grid(row=0, column=1, padx=5)
+
+        tk.Button(
+            botones,
+            text="Eliminar",
+            bg=COLOR_ROJO,
+            fg=COLOR_BLANCO,
+            width=12
+        ).grid(row=0, column=2, padx=5)
+
+        tk.Button(
+            botones,
+            text="Limpiar",
+            bg=COLOR_BEIGE,
+            fg=COLOR_TEXTO,
+            width=12
+        ).grid(row=0, column=3, padx=5)
+
+        # ========= TABLA =========
         self.tabla = ttk.Treeview(
             self.ventana,
-            columns=("codigo", "libro", "estado"),
+            columns=("Nombre", "Identidad", "Teléfono", "Tipo", "Estado"),
             show="headings",
-            height=8
+            height=10
         )
 
-        self.tabla.heading("codigo", text="Código")
-        self.tabla.heading("libro", text="Libro")
-        self.tabla.heading("estado", text="Estado")
+        self.tabla.heading("Nombre", text="Nombre")
+        self.tabla.heading("Identidad", text="Identidad")
+        self.tabla.heading("Teléfono", text="Teléfono")
+        self.tabla.heading("Tipo", text="Tipo")
+        self.tabla.heading("Estado", text="Estado")
 
-        self.tabla.pack(pady=10)
+        self.tabla.column("Nombre", width=180)
+        self.tabla.column("Identidad", width=150)
+        self.tabla.column("Teléfono", width=120)
+        self.tabla.column("Tipo", width=120)
+        self.tabla.column("Estado", width=100)
+
+        self.tabla.pack(padx=20, pady=15, fill="both", expand=True)
 
         self.ventana.mainloop()
 
 
-    def guardar(self):
-
-        self.controlador.agregar_ejemplar(
-            self.codigo.get(),
-            self.libro.get(),
-            self.estado.get(),
-            self.ubicacion.get(),
-            self.disponible.get(),
-            self.fecha.get()
-        )
-
-        self.actualizar_tabla()
-
-        self.codigo.delete(0, tk.END)
-        self.libro.delete(0, tk.END)
-        self.estado.set("")
-        self.ubicacion.delete(0, tk.END)
-        self.fecha.delete(0, tk.END)
-
-
-    def actualizar_tabla(self):
-
-        for fila in self.tabla.get_children():
-            self.tabla.delete(fila)
-
-        for ejemplar in self.controlador.obtener_ejemplares():
-
-            self.tabla.insert(
-                "",
-                tk.END,
-                values=(
-                    ejemplar.codigo_interno,
-                    ejemplar.libro_id,
-                    ejemplar.estado_fisico
-                )
-            )
-
-
 if __name__ == "__main__":
-
-    VentanaEjemplares()
+    VentanaLectores()

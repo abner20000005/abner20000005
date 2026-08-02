@@ -1,4 +1,4 @@
-from modelos.ejemplar import Ejemplar
+from modelos.Ejemplares import Ejemplar
 
 
 class EjemplarControlador:
