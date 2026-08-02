@@ -4,10 +4,13 @@
 - Mantiene la estructura de penalizaciones y pagos pendientes.
 """
 class Sancion:
-    def __init__(self, id_sancion, id_lector, motivo, monto, estado="Pendiente", id_devolucion=None):
+    # Se ajustan los atributos a las columnas exactas de la tabla Sanciones
+    def __init__(self, id_sancion, id_lector, motivo, monto, estado="Pendiente"):
         self.id_sancion = id_sancion
-        self.id_lector = id_lector      # ID del estudiante/usuario
-        self.motivo = motivo            # 'Retraso', 'Daño', 'Pérdida'
-        self.monto = monto              # Cantidad a pagar (float)
-        self.estado = estado            # 'Pendiente' o 'Pagado'
-        self.id_devolucion = id_devolucion # Para saber de qué préstamo viene la multa
+        self.id_lector = id_lector      
+        self.motivo = motivo            
+        self.monto = monto              
+        self.estado = estado            
+
+    def __str__(self):
+        return f"Sanción {self.id_sancion} | Lector: {self.id_lector} | Motivo: {self.motivo} | Monto: L.{self.monto} | Estado: {self.estado}"
