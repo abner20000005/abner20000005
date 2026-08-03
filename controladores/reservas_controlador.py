@@ -1,55 +1,83 @@
-from config.conexion import conectar
-from modelos.reservas import Reserva
+from config.conexion import obtener_conexion
+from modelos.reserva import Reserva
 
 def listar_reservas():
-    try:
-        conn = conectar()
-        cursor = conn.cursor()
-        query = """
-            SELECT R.Id_Reserva, L.Nombre + ' ' + L.Apellido, B.Titulo, 
-                   R.Fecha_Reserva, R.Orden_Espera, R.Estado
-            FROM Reservas R
-            JOIN Lectores L ON R.Id_Lector = L.Id_Lector
-            JOIN Libros B ON R.Id_Libro = B.Id_Libro
-        """
-        cursor.execute(query)
-        registros = cursor.fetchall()
-        conn.close()
-        
-        return [Reserva(*row) for row in registros]
-    except Exception as e:
-        print("Error al listar reservas:", e)
+    conexion = obtener_conexion()
+    if not conexion:
         return []
-
-def guardar_reserva(id_lector, id_libro, fecha):
     try:
-        conn = conectar()
-        cursor = conn.cursor()
+        cursor = conexion.cursor()
         cursor.execute("""
-            INSERT INTO Reservas (Id_Lector, Id_Libro, Fecha_Reserva, Estado)
-            VALUES (?, ?, ?, 'Activa')
-        """, (id_lector, id_libro, fecha))
-        conn.commit()
-        conn.close()
+            SELECT r.Id_Reserva, r.Fecha_Reserva, r.Estado,
+                   r.Id_Lector, l.Nombre + ' ' + l.Apellido,
+                   r.Id_Libro, li.Titulo
+            FROM Reservas r
+            INNER JOIN Lectores l ON r.Id_Lector = l.Id_Lector
+            INNER JOIN Libros li ON r.Id_Libro = li.Id_Libro
+            ORDER BY r.Id_Reserva DESC
+        """)
+        return [Reserva(*f) for f in cursor.fetchall()]
     except Exception as e:
-        print("Error al guardar reserva:", e)
+        print(f"Error: {e}")
+        return []
+    finally:
+        conexion.close()
+
+def obtener_lectores():
+    conexion = obtener_conexion()
+    if not conexion:
+        return []
+    try:
+        cursor = conexion.cursor()
+        cursor.execute("SELECT Id_Lector, Nombre + ' ' + Apellido FROM Lectores WHERE Estado = 'Activo' ORDER BY Apellido")
+        return cursor.fetchall()
+    except:
+        return []
+    finally:
+        conexion.close()
+
+def obtener_libros():
+    conexion = obtener_conexion()
+    if not conexion:
+        return []
+    try:
+        cursor = conexion.cursor()
+        cursor.execute("SELECT Id_Libro, Titulo FROM Libros ORDER BY Titulo")
+        return cursor.fetchall()
+    except:
+        return []
+    finally:
+        conexion.close()
+
+def guardar_reserva(fecha, id_lector, id_libro):
+    conexion = obtener_conexion()
+    if not conexion:
+        return False
+    try:
+        cursor = conexion.cursor()
+        cursor.execute("""
+            INSERT INTO Reservas (Fecha_Reserva, Estado, Id_Lector, Id_Libro)
+            VALUES (?, 'Activa', ?, ?)
+        """, (fecha, id_lector, id_libro))
+        conexion.commit()
+        return True
+    except Exception as e:
+        print(f"Error: {e}")
+        return False
+    finally:
+        conexion.close()
 
 def cancelar_reserva(id_reserva):
+    conexion = obtener_conexion()
+    if not conexion:
+        return False
     try:
-        conn = conectar()
-        cursor = conn.cursor()
+        cursor = conexion.cursor()
         cursor.execute("UPDATE Reservas SET Estado = 'Cancelada' WHERE Id_Reserva = ?", (id_reserva,))
-        conn.commit()
-        conn.close()
+        conexion.commit()
+        return True
     except Exception as e:
-        print("Error al cancelar reserva:", e)
-
-def eliminar_reserva(id_reserva):
-    try:
-        conn = conectar()
-        cursor = conn.cursor()
-        cursor.execute("DELETE FROM Reservas WHERE Id_Reserva = ?", (id_reserva,))
-        conn.commit()
-        conn.close()
-    except Exception as e:
-        print("Error al eliminar reserva:", e)
+        print(f"Error: {e}")
+        return False
+    finally:
+        conexion.close()

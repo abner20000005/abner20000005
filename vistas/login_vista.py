@@ -1,104 +1,58 @@
-"""
-- Diseña el formulario con cajas de texto para usuario y contraseña.
-- Contiene el botón de 'Iniciar Sesión' que invoca la validación en auth_controlador.py.
-"""
-#Hecho por Sary
 import tkinter as tk
-from tkinter import ttk, messagebox
-
-from controladores.auth_controlador import validar_usuario
-
-
-#VENTANA
-
-ventana = tk.Tk()
-ventana.title("Biblioteca 360 - Iniciar Sesión")
-ventana.geometry("400x400")
-ventana.configure(bg="#F4EEE8")
-ventana.resizable(False, False)
-
-#ESTILOS
+from tkinter import messagebox
+from controladores.auth_controlador import iniciar_sesion
+from vistas.menu_principal_vista import abrir_menu
 
 COLOR_FONDO = "#F4EEE8"
 COLOR_VINO = "#6D213C"
 COLOR_CAFE = "#7B4B3A"
 
-#FUNCIONES
+def abrir_login():
+    ventana = tk.Tk()
+    ventana.title("Biblioteca 360 - Inicio de Sesión")
+    ventana.geometry("420x320")
+    ventana.configure(bg=COLOR_FONDO)
+    ventana.resizable(False, False)
 
-def iniciar_sesion():
+    # Centrar ventana
+    ventana.update_idletasks()
+    x = (ventana.winfo_screenwidth() // 2) - 210
+    y = (ventana.winfo_screenheight() // 2) - 160
+    ventana.geometry(f"+{x}+{y}")
 
-    usuario = txtUsuario.get()
-    contrasena = txtContrasena.get()
+    tk.Label(ventana, text="BIBLIOTECA 360", bg=COLOR_VINO, fg="white",
+             font=("Arial", 18, "bold"), pady=15).pack(fill="x")
 
-    rol = validar_usuario(usuario, contrasena)
+    frame = tk.Frame(ventana, bg=COLOR_FONDO)
+    frame.pack(pady=30)
 
-    if rol is None:
-        messagebox.showerror("Error", "Usuario o contraseña incorrectos")
-        return
+    tk.Label(frame, text="Usuario:", bg=COLOR_FONDO, font=("Arial", 11)).grid(row=0, column=0, sticky="w", pady=8)
+    txt_usuario = tk.Entry(frame, width=28, font=("Arial", 11))
+    txt_usuario.grid(row=0, column=1, padx=10, pady=8)
 
-    messagebox.showinfo("Bienvenido", "Sesión iniciada como: " + rol)
+    tk.Label(frame, text="Contraseña:", bg=COLOR_FONDO, font=("Arial", 11)).grid(row=1, column=0, sticky="w", pady=8)
+    txt_clave = tk.Entry(frame, width=28, show="*", font=("Arial", 11))
+    txt_clave.grid(row=1, column=1, padx=10, pady=8)
 
-    
-    ventana.destroy()
+    def login():
+        usuario = txt_usuario.get().strip()
+        clave = txt_clave.get().strip()
 
-    
+        if not usuario or not clave:
+            messagebox.showerror("Error", "Debe completar todos los campos.")
+            return
 
+        user = iniciar_sesion(usuario, clave)
+        if user:
+            ventana.destroy()
+            abrir_menu(user)
+        else:
+            messagebox.showerror("Error", "Usuario o contraseña incorrectos.")
 
-def limpiar():
+    tk.Button(ventana, text="Iniciar Sesión", bg=COLOR_CAFE, fg="white",
+              font=("Arial", 11, "bold"), width=18, relief="flat",
+              command=login).pack(pady=15)
 
-    txtUsuario.delete(0, tk.END)
-    txtContrasena.delete(0, tk.END)
-
-
-#TITULO
-
-tk.Label(
-    ventana,
-    text="BIBLIOTECA 360",
-    bg=COLOR_VINO,
-    fg="white",
-    font=("Arial",18,"bold"),
-    pady=15
-).pack(fill="x")
-
-#FORMULARIO
-
-frame = tk.Frame(ventana,bg=COLOR_FONDO)
-frame.pack(pady=40)
-
-tk.Label(frame,text="Usuario",bg=COLOR_FONDO,font=("Arial",11)).grid(row=0,column=0,sticky="w",pady=10)
-txtUsuario=tk.Entry(frame,width=25)
-txtUsuario.grid(row=0,column=1,padx=10)
-
-tk.Label(frame,text="Contraseña",bg=COLOR_FONDO,font=("Arial",11)).grid(row=1,column=0,sticky="w",pady=10)
-txtContrasena=tk.Entry(frame,width=25,show="*")
-txtContrasena.grid(row=1,column=1,padx=10)
-
-#BOTONES
-
-frameBotones=tk.Frame(ventana,bg=COLOR_FONDO)
-frameBotones.pack(pady=20)
-
-tk.Button(
-    frameBotones,
-    text="Iniciar Sesión",
-    bg=COLOR_CAFE,
-    fg="white",
-    width=14,
-    relief="flat",
-    font=("Arial",10,"bold"),
-    command=iniciar_sesion
-).pack(side="left", padx=6)
-
-tk.Button(
-    frameBotones,
-    text="Limpiar",
-    bg="#C9B79C",
-    fg="black",
-    width=14,
-    relief="flat",
-    font=("Arial",10,"bold"),
-    command=limpiar
-).pack(side="left", padx=6)
-
-ventana.mainloop()
+    txt_usuario.focus()
+    ventana.bind("<Return>", lambda e: login())
+    ventana.mainloop()

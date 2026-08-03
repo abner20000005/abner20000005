@@ -1,104 +1,103 @@
-"""
-- Interfaz para buscar y seleccionar préstamos activos por lector o ejemplar.
-- Evaluación e ingreso del estado físico del ejemplar retornado.
-- Muestra el cálculo automático de días de retraso y multas generadas si la entrega es fuera de tiempo.
-"""
-
 import tkinter as tk
 from tkinter import ttk, messagebox
+from datetime import date
+from controladores.devoluciones_controlador import *
 
 COLOR_FONDO = "#F4EEE8"
 COLOR_VINO = "#6D213C"
-COLOR_CAFE = "#7B4B3A"
-COLOR_CAFE_CLARO = "#8C5B47"
-COLOR_ROJO = "#A63D40"
-COLOR_BEIGE = "#C9B79C"
-COLOR_TEXTO = "#2E2E2E"
-COLOR_BLANCO = "#FFFFFF"
 
-FUENTE_TITULO = ("Arial", 18, "bold")
-FUENTE_SUBTITULO = ("Arial", 11, "bold")
-FUENTE_TEXTO = ("Arial", 10)
-FUENTE_BOTON = ("Arial", 10, "bold")
+def abrir_devoluciones():
+    ventana = tk.Toplevel()
+    ventana.title("Biblioteca 360 - Gestión de Devoluciones")
+    ventana.geometry("1050x600")
+    ventana.configure(bg=COLOR_FONDO)
+    ventana.resizable(False, False)
 
+    style = ttk.Style()
+    style.theme_use("clam")
+    style.configure("Treeview", rowheight=25, font=("Arial", 10))
+    style.configure("Treeview.Heading", background=COLOR_VINO, foreground="white", font=("Arial", 10, "bold"))
 
-class DevolucionesVista(tk.Frame):
-    def __init__(self, parent):
-        super().__init__(parent, bg=COLOR_FONDO)
-        self.pack(fill="both", expand=True)
+    prestamos_dict = {}  # texto -> (id_prestamo, fecha_limite, id_ejemplar)
 
-        self.configurar_estilos_ttk()
-        self.crear_interfaz()
+    def cargar_prestamos():
+        cmbPrestamo["values"] = []
+        prestamos_dict.clear()
+        for id_p, texto, f_limite, id_e in obtener_prestamos_activos():
+            prestamos_dict[texto] = (id_p, f_limite, id_e)
+        cmbPrestamo["values"] = list(prestamos_dict.keys())
 
-    def configurar_estilos_ttk(self):
-        style = ttk.Style()
-        style.theme_use("clam")
-        style.configure("Treeview.Heading",
-                        background=COLOR_VINO,
-                        foreground=COLOR_BLANCO,
-                        font=("Arial", 10, "bold"),
-                        relief="flat")
-        style.configure("Treeview",
-                        background=COLOR_BLANCO,
-                        foreground=COLOR_TEXTO,
-                        fieldbackground=COLOR_BLANCO,
-                        rowheight=25,
-                        font=FUENTE_TEXTO)
-        style.map("Treeview", background=[("selected", COLOR_BEIGE)])
+    def actualizar_tabla():
+        tabla.delete(*tabla.get_children())
+        for d in listar_devoluciones():
+            tabla.insert("", tk.END, values=(
+                d.id_devolucion, str(d.fecha)[:10], d.dias_retraso, f"L. {d.multa:.2f}",
+                d.lector, d.codigo, d.libro
+            ))
 
-    def crear_interfaz(self):
-        header = tk.Frame(self, bg=COLOR_VINO, height=50)
-        header.pack(fill="x", side="top")
-        lbl_titulo = tk.Label(header, text="GESTIÓN DE DEVOLUCIONES", 
-                              fg=COLOR_BLANCO, bg=COLOR_VINO, font=FUENTE_TITULO)
-        lbl_titulo.pack(pady=10)
+    def limpiar():
+        cmbPrestamo.set("")
+        txtFecha.delete(0, tk.END)
+        txtFecha.insert(0, str(date.today()))
+        lblInfo.config(text="")
 
-        body = tk.Frame(self, bg=COLOR_FONDO)
-        body.pack(fill="both", expand=True, padx=25, pady=15)
+    def registrar():
+        if not cmbPrestamo.get():
+            messagebox.showerror("Error", "Debe seleccionar un préstamo.")
+            return
+        if not txtFecha.get().strip():
+            messagebox.showerror("Error", "Debe ingresar la fecha de devolución.")
+            return
 
-        frame_form = tk.LabelFrame(body, text=" Detalle de Devolución ", bg=COLOR_FONDO, 
-                                   fg=COLOR_VINO, font=FUENTE_SUBTITULO, padx=15, pady=10)
-        frame_form.pack(fill="x", pady=5)
+        id_prestamo, fecha_limite, id_ejemplar = prestamos_dict[cmbPrestamo.get()]
+        ok, dias, multa = registrar_devolucion(
+            id_prestamo, id_ejemplar, fecha_limite, txtFecha.get().strip()
+        )
+        if ok:
+            actualizar_tabla()
+            cargar_prestamos()
+            limpiar()
+            if dias > 0:
+                messagebox.showinfo("Éxito", f"Devolución registrada.\nDías de retraso: {dias}\nMulta: L. {multa:.2f}")
+            else:
+                messagebox.showinfo("Éxito", "Devolución registrada sin retraso.")
+        else:
+            messagebox.showerror("Error", "No se pudo registrar la devolución.")
 
-        tk.Label(frame_form, text="Estado Físico del Ejemplar:", bg=COLOR_FONDO, fg=COLOR_TEXTO, font=FUENTE_TEXTO).grid(row=0, column=0, sticky="w", pady=5)
-        self.combo_estado = ttk.Combobox(frame_form, values=["Bueno", "Regular", "Dañado"], state="readonly", font=FUENTE_TEXTO)
-        self.combo_estado.current(0)
-        self.combo_estado.grid(row=0, column=1, padx=10, pady=5, sticky="w")
+    # Interfaz
+    tk.Label(ventana, text="GESTIÓN DE DEVOLUCIONES", bg=COLOR_VINO, fg="white",
+             font=("Arial", 18, "bold"), pady=10).pack(fill="x")
 
-        tk.Label(frame_form, text="Días de Retraso:", bg=COLOR_FONDO, fg=COLOR_TEXTO, font=FUENTE_TEXTO).grid(row=1, column=0, sticky="w", pady=5)
-        self.lbl_dias = tk.Label(frame_form, text="0 días", font=FUENTE_SUBTITULO, fg=COLOR_ROJO, bg=COLOR_FONDO)
-        self.lbl_dias.grid(row=1, column=1, padx=10, pady=5, sticky="w")
+    frame = tk.Frame(ventana, bg=COLOR_FONDO)
+    frame.pack(fill="x", padx=15, pady=12)
 
-        tk.Label(frame_form, text="Multa Calculada:", bg=COLOR_FONDO, fg=COLOR_TEXTO, font=FUENTE_TEXTO).grid(row=2, column=0, sticky="w", pady=5)
-        self.lbl_multa = tk.Label(frame_form, text="L. 0.00", font=FUENTE_SUBTITULO, fg=COLOR_ROJO, bg=COLOR_FONDO)
-        self.lbl_multa.grid(row=2, column=1, padx=10, pady=5, sticky="w")
+    tk.Label(frame, text="Préstamo activo:", bg=COLOR_FONDO).grid(row=0, column=0, sticky="w", pady=4)
+    cmbPrestamo = ttk.Combobox(frame, width=70, state="readonly")
+    cmbPrestamo.grid(row=0, column=1, columnspan=3, padx=5, pady=4, sticky="w")
 
-        frame_botones = tk.Frame(body, bg=COLOR_FONDO)
-        frame_botones.pack(pady=10)
+    tk.Label(frame, text="Fecha devolución:", bg=COLOR_FONDO).grid(row=1, column=0, sticky="w", pady=4)
+    txtFecha = tk.Entry(frame, width=20)
+    txtFecha.grid(row=1, column=1, padx=5, pady=4, sticky="w")
+    txtFecha.insert(0, str(date.today()))
 
-        btn_guardar = tk.Button(frame_botones, text="Procesar", bg=COLOR_CAFE, fg=COLOR_BLANCO,
-                                font=FUENTE_BOTON, width=15, bd=0, cursor="hand2")
-        btn_guardar.pack(side="left", padx=5)
+    lblInfo = tk.Label(frame, text="", bg=COLOR_FONDO, fg=COLOR_VINO, font=("Arial", 10, "bold"))
+    lblInfo.grid(row=1, column=2, columnspan=2, sticky="w", padx=10)
 
-        btn_limpiar = tk.Button(frame_botones, text="Limpiar", bg=COLOR_BEIGE, fg=COLOR_TEXTO,
-                                font=FUENTE_BOTON, width=15, bd=0, cursor="hand2")
-        btn_limpiar.pack(side="left", padx=5)
+    frameBotones = tk.Frame(ventana, bg=COLOR_FONDO)
+    frameBotones.pack(pady=8)
+    tk.Button(frameBotones, text="Registrar Devolución", bg="#7B4B3A", fg="white", width=20,
+              relief="flat", font=("Arial", 10, "bold"), command=registrar).pack(side="left", padx=6)
+    tk.Button(frameBotones, text="Limpiar", bg="#C9B79C", fg="black", width=12,
+              relief="flat", font=("Arial", 10, "bold"), command=limpiar).pack(side="left", padx=6)
 
-        tk.Label(body, text="Préstamos Pendientes:", bg=COLOR_FONDO, fg=COLOR_TEXTO, font=FUENTE_SUBTITULO).pack(anchor="w", pady=(10, 5))
+    tabla = ttk.Treeview(ventana, columns=("ID", "Fecha", "Retraso", "Multa", "Lector", "Codigo", "Libro"),
+                         show="headings", height=14)
+    for col, txt, w in [("ID", "ID", 50), ("Fecha", "Fecha", 100), ("Retraso", "Días retraso", 100),
+                        ("Multa", "Multa", 90), ("Lector", "Lector", 180), ("Codigo", "Código", 100),
+                        ("Libro", "Libro", 220)]:
+        tabla.heading(col, text=txt)
+        tabla.column(col, width=w, anchor="center")
+    tabla.pack(fill="both", expand=True, padx=15, pady=(0, 15))
 
-        columns = ("ID Préstamo", "Lector", "Código Libro", "F. Préstamo", "F. Límite")
-        self.tabla = ttk.Treeview(body, columns=columns, show="headings", height=7)
-        
-        for col in columns:
-            self.tabla.heading(col, text=col)
-            self.tabla.column(col, anchor="center")
-            
-        self.tabla.pack(fill="both", expand=True)
-
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    root.title("Biblioteca 360 - Devoluciones")
-    root.geometry("850x550")
-    app = DevolucionesVista(root)
-    root.mainloop()
+    cargar_prestamos()
+    actualizar_tabla()

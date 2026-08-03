@@ -1,6 +1,4 @@
-from vistas.libros_vista import ventana
+from vistas.login_vista import abrir_login
 
 if __name__ == "__main__":
-    import vistas.login_vista
-
-ventana.mainloop()
+    abrir_login()
